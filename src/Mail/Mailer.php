@@ -280,6 +280,8 @@ class Mailer implements MailerInterface {
         }
       }
 
+      // See https://github.com/augustofagioli/d8_simplenews_nomcs/issues/1
+      
       //       dump($spool);
       //       dump($results_table);
       //       dump($item);
