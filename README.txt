@@ -1,3 +1,6 @@
+***Find below README.me from  cloned https://www.drupal.org/project/simplenews/releases/8.x-2.x-dev ***
+
+
 
 DESCRIPTION
 -----------
