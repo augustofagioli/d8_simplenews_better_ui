@@ -1,0 +1,53 @@
+CRAP BEGINS >>>>>
+ 8. MULTILINGUAL SUPPORT
+
+    Simplenews supports multilingual newsletters for node translation and url
+    path prefixes.
+
+    ** Who wants to receive newsltter in random languages? That would be so confusing **
+
+
+    When translated newsletter issues are available subscribers receive the
+    newsletter in their preferred language (according to account setting).
+    Translation module is required for newsletter translation.
+
+    Path prefixes are added to footer message according to the subscribers
+    preferred language.
+
+    The preferred language of anonymous users is set based on the interface
+    language of the page they visit for subscription. Anonymous users can NOT
+    change their preferred language. Users with an account on the site will be
+    subscribed with the preferred language as set in their account settings.
+
+    The confirmation mails can be translated by enableding the Simplenews
+    variables at:
+      Home > Administration > Configuration > Regional and language > Multilingual settings > Variables
+    Afterwards, the mail subject and body can be entered for every enabled
+    language.
+
+<<<<< CRAP ENDS
+
+
+
+
+DESCRIPTION
+-----------
+
+Simplenews doesn't need to hangle content translation.
+Remove that and assign  a newsletter language for subscribers audience
+
+
+
+
+ACTIONS
+-------
+
+
+. Add "language field" to the newsletter (NewsletterForm.php:92)
+. Suspend multilanguage count (mailer.php:283)
+
+
+
+
+
+
