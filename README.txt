@@ -1,5 +1,7 @@
-***Find below README.me from  cloned https://www.drupal.org/project/simplenews/releases/8.x-2.x-dev ***
 
+Drupal 8 Simplenews NOMCS [ No Multilanguge Support]
+
+***Find here  README.me  cloned https://www.drupal.org/project/simplenews/releases/8.x-2.x-dev ***
 
 
 DESCRIPTION
