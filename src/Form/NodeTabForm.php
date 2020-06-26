@@ -161,18 +161,11 @@ class NodeTabForm extends FormBase {
     }
     else {
 
-      // @BUG - Newsletter status is not going to "SENT"
-      // we can only redirect sent statistics to the log
-
-
-      //temporarly override description with counts and status
-      $summary['description']  = "Not able today to give completed newsletters the proper status.<br/> All mails may have been sent.<br/>
-      Enable log at \"/admin/config/services/simplenews/settings/mail\" and check the log to see how many mail were sent.<br/>";
 
 
       $form['status'] = [
         '#type' => 'item',
-        '#title' => $summary['description'] ,
+        '#title' => $summary['description'],
       ];
       if ($status != SIMPLENEWS_STATUS_SEND_READY) {
         $form['actions'] = [

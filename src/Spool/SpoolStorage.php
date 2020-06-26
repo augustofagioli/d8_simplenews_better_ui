@@ -335,8 +335,19 @@ class SpoolStorage implements SpoolStorageInterface {
     $params['@error'] = $summary['error_count'] = (int) $issue->simplenews_issue->error_count;
     $params['@count'] = $summary['count'] = (int) $issue->simplenews_issue->subscribers;
 
+
+          //temporarly override description with counts and status
+//       if (strlen($summary['description']) > 10  )  {
+//         $summary['description']  = "Not able today to give completed newsletters the proper status.<br/> Status is here unclear.
+//         All mails may have been sent or never even started.<br/>.
+//         Enable log at \"/admin/config/services/simplenews/settings/mail\" and check the log to see how many mail were sent.<br/>
+//         Fix this in Mailer.php.<br>
+//         https://github.com/augustofagioli/d8_simplenews_nomcs/issues/1 ";
+//       }
+
+
     if ($status == SIMPLENEWS_STATUS_SEND_READY) {
-      $summary['description'] = $this->t('QQQQNewsletter issue sent to @sent subscribers, @error errors.', $params);
+      $summary['description'] = $this->t('Newsletter issue sent to @sent subscribers, @error errors.', $params);
     }
     elseif ($status == SIMPLENEWS_STATUS_SEND_PENDING) {
       $summary['description'] = $this->t('Newsletter issue is pending, @sent mails sent out of @count, @error errors.', $params);

@@ -225,6 +225,7 @@ class Mailer implements MailerInterface {
 
     // Send pending messages from database cache.
     $spool = $this->spoolStorage->getMails($limit, $conditions);
+
     if (count($spool) > 0) {
 
       // Switch to the anonymous user.
@@ -238,6 +239,7 @@ class Mailer implements MailerInterface {
 
       try {
         while ($mail = $spool->nextMail()) {
+          //dump($mail);exit;
           $mail->setKey('node');
           $result = $this->sendMail($mail);
           $spool->setLastMailResult($result);
@@ -262,56 +264,77 @@ class Mailer implements MailerInterface {
         $this->logger->error($e->getMessage());
       }
 
+
       // Calculate counts.
       $results_table = [];
       $freq = array_fill(0, SpoolStorageInterface::STATUS_FAILED + 1, 0);
       foreach ($spool->getResults() as $row) {
         $freq[$row->result]++;
         if (isset(static::TRACK_RESULTS[$row->result])) {
-          $item = &$results_table[$row->entity_type][$row->entity_id][$row->langcode][$row->result];
-          $item = ($item ?? 0) + 1;;
+          // No support for Multilangage Content Newsletters
+          // https://www.drupal.org/project/simplenews/issues/3153612
+
+          $item = &$results_table[$row->entity_type][$row->entity_id][$row->result];
+          $item = ($item ?? 0) + 1;
         }
       }
 
-      // Update subscriber count.
-      if ($this->lock->acquire('simplenews_update_sent_count')) {
-        foreach ($results_table as $entity_type => $ids) {
-          $storage = $this->entityTypeManager->getStorage($entity_type);
-
-          foreach ($ids as $entity_id => $languages) {
-            $storage->resetCache([$entity_id]);
-            $entity = $storage->load($entity_id);
 
 
 
-            // SEVERE ******************************************************************************************
-            // When a registerd subscriber language doesn't match node language, the send process breaks producing
-            // InvalidArgumentException: Invalid translation language (fr) specified.
-            // in Drupal\Core\Entity\ContentEntityBase->getTranslation()
-            //(linea 873 di /home/a/Public/d8_composer/web/core/lib/Drupal/Core/Entity/ContentEntityBase.php).
+      // See https://github.com/augustofagioli/d8_simplenews_nomcs/issues/1
 
-            // There's no way  easy way to send to following users in list.
-            // https://www.drupal.org/project/simplenews/issues/3106374
-            // As per https://www.drupal.org/project/simplenews/issues/3153612
-            // we should remove "multilanguage content support"
-            foreach ($languages as $langcode => $counts) {
+        //dump($spool);
+        //dump($results_table);
+        //       dump($item);
+        //exit;
+        //
+        //$nid         = key($results_table['node']);
+        //dump($nid);  //exit;
+        //$entity  = Node::load($nid);
+        //dump($node);  //exit;
+        //       $entity_type = $node->type->entity->label();
+        //       //dump($entity_type);
+        //       //exit;
+        //
+        //       $storage = $this->entityTypeManager->getStorage($entity_type);
+        //
+        //$entity = $storage->load($entity_id);
+        //       //dump($entity);
+        //
+        //       //exit;
+        //
+        //
+        //       //$entity->simplenews_issue->sent_count  += $entity[SpoolStorageInterface::STATUS_DONE]   ?? 0;
+        //       //$entity->simplenews_issue->error_count += $entity[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+        //
+        //$entity->simplenews_issue->sent_count  += 99;
+        //$entity->simplenews_issue->error_count += 88;
+        //
 
-              // dummy fix for https://www.drupal.org/project/simplenews/issues/3106374:
-              //  ... get the newsleter langauge and limit to that.
-              if ($langcode=='it')  {
-                $translation = $entity->getTranslation($langcode);
-                $translation->simplenews_issue->sent_count += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
-                $translation->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
-              }
-            }
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
+        //Node::save($nid);
+
+        //$entity->save();
 
 
-            $entity->save();
-          }
-        }
-        $this->lock->release('simplenews_update_sent_count');
-      }
+      //       if ($this->lock->acquire('simplenews_update_sent_count')) {
+      //         foreach ($results_table as $entity_type => $ids) {
+      //           $storage = $this->entityTypeManager->getStorage($entity_type);
+      //
+      //           foreach ($ids as $entity_id => $languages) {
+      //             $storage->resetCache([$entity_id]);
+      //             $entity = $storage->load($entity_id);
+      //
+      //             //  counter below is buggy
+      //             //  see how send was at /admin/reports/dblog?type%5B%5D=simplenews
+      //             $entity->simplenews_issue->sent_count  += $languages[SpoolStorageInterface::STATUS_DONE]   ?? 0;
+      //             $entity->simplenews_issue->error_count += $languages[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+      //             $entity->save();
+      //           }
+      //         }
+      //         $this->lock->release('simplenews_update_sent_count');
+      //       }
+      // *******************************************************************************************
 
       // Report sent result and elapsed time. On Windows systems getrusage() is
       // not implemented and hence no elapsed time is available.
@@ -487,7 +510,7 @@ class Mailer implements MailerInterface {
     if (!empty($send)) {
       foreach ($send as $nid) {
         $node = Node::load($nid);
-        $node->simplenews_issue->status = SIMPLENEWS_STATUS_SEND_READY;
+        //$node->simplenews_issue->status = SIMPLENEWS_STATUS_SEND_READY;
         $node->save();
       }
     }

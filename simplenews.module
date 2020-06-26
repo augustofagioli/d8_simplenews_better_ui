@@ -308,7 +308,6 @@ function simplenews_form_node_form_alter(&$form, FormStateInterface $form_state,
       ];
     }
 
-    //https://drupal.stackexchange.com/questions/186315/how-to-get-instance-of-referenced-entity
     $entitites = $node->get("simplenews_issue")->referencedEntities();
 
     if ( $entitites[0]->getEntityTypeId() == "simplenews_newsletter" )  {
@@ -822,7 +821,7 @@ function template_preprocess_simplenews_newsletter_body(&$variables) {
   /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
   $entity = !empty($elements['#' . $entity_type]) ? $elements['#' . $entity_type] : $elements['#entity'];
 
-  // multilanguage-content
+  // multilanguage-content  ????
   //   if ($elements['#language'] && $entity->hasTranslation($elements['#language'])) {
   //     $entity = $entity->getTranslation($elements['#language']);
   //   }
