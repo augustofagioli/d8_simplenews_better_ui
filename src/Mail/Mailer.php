@@ -275,41 +275,49 @@ class Mailer implements MailerInterface {
         if (isset(static::TRACK_RESULTS[$row->result])) {
           // No support for Multilangage Content Newsletters
           // https://www.drupal.org/project/simplenews/issues/3153612
+
           $item = &$results_table[$row->entity_type][$row->entity_id][$row->result];
           $item = ($item ?? 0) + 1;
         }
       }
 
+
+
+
       // See https://github.com/augustofagioli/d8_simplenews_nomcs/issues/1
-      
-      //       dump($spool);
-      //       dump($results_table);
-      //       dump($item);
-      //exit;
 
-      $nid         = key($results_table['node']);
-      //dump($nid);  //exit;
-      $node        = Node::load($nid);
-      //dump($node);  //exit;
-      $entity_type = $node->type->entity->label();
-      //dump($entity_type);
-      //exit;
+        //dump($spool);
+        //dump($results_table);
+        //       dump($item);
+        //exit;
+        //
+        //$nid         = key($results_table['node']);
+        //dump($nid);  //exit;
+        //$entity  = Node::load($nid);
+        //dump($node);  //exit;
+        //       $entity_type = $node->type->entity->label();
+        //       //dump($entity_type);
+        //       //exit;
+        //
+        //       $storage = $this->entityTypeManager->getStorage($entity_type);
+        //
+        //$entity = $storage->load($entity_id);
+        //       //dump($entity);
+        //
+        //       //exit;
+        //
+        //
+        //       //$entity->simplenews_issue->sent_count  += $entity[SpoolStorageInterface::STATUS_DONE]   ?? 0;
+        //       //$entity->simplenews_issue->error_count += $entity[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+        //
+        //$entity->simplenews_issue->sent_count  += 99;
+        //$entity->simplenews_issue->error_count += 88;
+        //
 
-      $storage = $this->entityTypeManager->getStorage($entity_type);
+        //Node::save($nid);
 
-      $entity = $storage->load($entity_id);
-      //dump($entity);
+        //$entity->save();
 
-      //exit;
-
-
-      //$entity->simplenews_issue->sent_count  += $entity[SpoolStorageInterface::STATUS_DONE]   ?? 0;
-      //$entity->simplenews_issue->error_count += $entity[SpoolStorageInterface::STATUS_FAILED] ?? 0;
-
-      $entity->simplenews_issue->sent_count  += 99;
-      $entity->simplenews_issue->error_count += 88;
-
-      $entity->save();
 
       //       if ($this->lock->acquire('simplenews_update_sent_count')) {
       //         foreach ($results_table as $entity_type => $ids) {

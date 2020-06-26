@@ -90,6 +90,7 @@ class NodeTabForm extends FormBase {
     $config = $this->config('simplenews.settings');
     $status = $node->simplenews_issue->status;
     $summary = $this->spoolStorage->issueSummary($node);
+    dump ($node);exit;
     $form['#title'] = $this->t('<em>Newsletter issue</em> @title', ['@title' => $node->getTitle()]);
 
     // We will need the node.
@@ -129,7 +130,7 @@ class NodeTabForm extends FormBase {
       // Add some text to describe the send situation.
       $form['send']['count'] = [
         '#type' => 'item',
-        '#markup' => $this->t('Send newsletter issue to @count subscribers.', ['@count' => $summary['count']]),
+        '#markup' => $this->t('Send newsletter issue to NAME_OF_NEWSLETTET with @count subscribers.', ['@count' => $summary['count']]),
       ];
 
       if (!$node->isPublished()) {
@@ -155,9 +156,19 @@ class NodeTabForm extends FormBase {
       ];
     }
     else {
+
+      // @BUG - Newsletter status is not going to "SENT"
+      // we can only redirect sent statistics to the log
+
+
+      //temporarly override description with counts and status
+      $summary['description']  = "Not able today to give completed newsletters the proper status.<br/> All mails may have been sent.<br/>
+      Enable log at \"/admin/config/services/simplenews/settings/mail\" and check the log to see how many mail were sent.<br/>";
+
+
       $form['status'] = [
         '#type' => 'item',
-        '#title' => $summary['description'],
+        '#title' => $summary['description'] ,
       ];
       if ($status != SIMPLENEWS_STATUS_SEND_READY) {
         $form['actions'] = [
