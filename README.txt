@@ -1,7 +1,16 @@
 
 Drupal 8 Simplenews NOMCS [No Multilanguge Content Support]
 
+We are working here for a usable release release candidate to be posted  at https://www.drupal.org/project/simplenews
+
+
+
 ***Find here  README.me  cloned https://www.drupal.org/project/simplenews/releases/8.x-2.x-dev ***
+
+
+
+
+
 
 
 DESCRIPTION
