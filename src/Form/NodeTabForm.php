@@ -90,7 +90,11 @@ class NodeTabForm extends FormBase {
     $config = $this->config('simplenews.settings');
     $status = $node->simplenews_issue->status;
     $summary = $this->spoolStorage->issueSummary($node);
-    dump ($node);exit;
+
+
+    //@TODO what's the current newsletter name?
+    $NAME_OF_NEWSLETTER = ">>NAME_OF_THE_ACTUAL_NEWSLETTER<<";
+
     $form['#title'] = $this->t('<em>Newsletter issue</em> @title', ['@title' => $node->getTitle()]);
 
     // We will need the node.
@@ -130,7 +134,7 @@ class NodeTabForm extends FormBase {
       // Add some text to describe the send situation.
       $form['send']['count'] = [
         '#type' => 'item',
-        '#markup' => $this->t('Send newsletter issue to NAME_OF_NEWSLETTET with @count subscribers.', ['@count' => $summary['count']]),
+        '#markup' => $this->t('Send newsletter issue to %s with @count subscribers.', ['@count' => $summary['count'], '%s' => $NAME_OF_NEWSLETTER]),
       ];
 
       if (!$node->isPublished()) {
