@@ -299,11 +299,22 @@ class Mailer implements MailerInterface {
               // dummy fix for https://www.drupal.org/project/simplenews/issues/3106374:
               //  ... get the newsleter langauge and limit to that.
               if ($langcode=='it')  {
-                $translation = $entity->getTranslation($langcode);
-                $translation->simplenews_issue->sent_count += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
-                $translation->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+
+                //  In sendSpool() remove the call to getTranslation() and instead update $entity->simplenews_issue.
+                //  $translation = $entity->getTranslation($langcode);
+
+                $entity->simplenews_issue->sent_count  += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
+                $entity->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+
+
+
               }
             }
+
+
+
+
+
             ////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -446,10 +457,11 @@ class Mailer implements MailerInterface {
   /**
    * {@inheritdoc}
    */
+
   public function updateSendStatus() {
     // Number of pending emails in the spool.
     $counts = [];
-    // Sum of emails in the spool per tnid (translation id)
+    // Sum of emails in the spool
     $sum = [];
     // Nodes with the status 'send'.
     $send = [];
@@ -460,24 +472,18 @@ class Mailer implements MailerInterface {
       ->condition('simplenews_issue.status', SIMPLENEWS_STATUS_SEND_PENDING)
       ->execute();
     $nodes = Node::loadMultiple($nids);
+
     if ($nodes) {
       foreach ($nodes as $nid => $node) {
-        $counts[$node->simplenews_issue->target_id][$nid] = $this->spoolStorage->countMails(['entity_id' => $nid, 'entity_type' => 'node']);
+        $newsletter_id = $node->simplenews_issue->target_id;
+        $counts[$newsletter_id][$nid] = $this->spoolStorage->countMails(['entity_id' => $nid, 'entity_type' => 'node']);
       }
     }
-    // Determine which nodes are sent per translation group and individual node.
-    foreach ($counts as $newsletter_id => $node_count) {
-      // The sum of emails per tnid is the combined status result for the group
-      // of translated nodes. Untranslated nodes have tnid == 0 which will be
-      // ignored later.
-      $sum[$newsletter_id] = array_sum($node_count);
+
+    foreach ($counts as $newsletter_issue_id => $node_count) {
+      $sum[$newsletter_issue_id] = array_sum($node_count);
       foreach ($node_count as $nid => $count) {
-        // Translated nodes (tnid != 0)
-        if ($newsletter_id != '0' && $sum[$newsletter_id] == '0') {
-          $send[] = $nid;
-        }
-        // Untranslated nodes (tnid == 0)
-        elseif ($newsletter_id == '0' && $count == '0') {
+        if ($newsletter_issue_id != '0' && $sum[$newsletter_issue_id] == '0') {
           $send[] = $nid;
         }
       }

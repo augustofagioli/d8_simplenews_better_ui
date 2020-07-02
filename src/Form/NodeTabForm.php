@@ -8,9 +8,12 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
-use Drupal\simplenews\Spool\SpoolStorageInterface;
+use Drupal\simplenews\Entity\Newsletter;
 use Drupal\simplenews\Mail\MailerInterface;
+use Drupal\simplenews\Spool\SpoolStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+
+
 
 /**
  * Configure simplenews subscriptions of a user.
@@ -91,9 +94,14 @@ class NodeTabForm extends FormBase {
     $status = $node->simplenews_issue->status;
     $summary = $this->spoolStorage->issueSummary($node);
 
+    $newsletter_id = $node->get('simplenews_issue')->getValue()[0]['target_id'];
+    $newsletter = Newsletter::load($newsletter_id);
+
+
 
     //@TODO what's the current newsletter name?
-    $NAME_OF_NEWSLETTER = ">>NAME_OF_THE_ACTUAL_NEWSLETTER<<";
+    $NAME_OF_NEWSLETTER = $newsletter->name;
+    $LANG_OF_NEWSLETTER = $newsletter->lang;
 
     $form['#title'] = $this->t('<em>Newsletter issue</em> @title', ['@title' => $node->getTitle()]);
 
@@ -103,6 +111,23 @@ class NodeTabForm extends FormBase {
     // Show newsletter sending options if newsletter has not been send yet.
     // If send a notification is shown.
     if ($status == SIMPLENEWS_STATUS_SEND_NOT) {
+
+      $form['info'] = [
+        '#type' => 'details',
+        '#open' => TRUE,
+        '#title' => $this->t('Info'),
+      ];
+
+      $tmp  = t('This newsletter issue  will be sent to:');
+      $tmp .= '<ul>';
+      $tmp .= '<li>'.t('Newsletter')  . ": <b>" . $newsletter->name .'</b></li>';
+      $tmp .= '<li>'.t('Language')    . ": <b>" . $newsletter->lang.'</b></li>';
+      $tmp .= '<li>'.t('Subscribers') . ": <b>" . $summary['count'].'</b></li>';
+      $tmp .= '</ul>';
+
+      $form['info']['text'] = [
+        '#markup' =>  $tmp,
+      ];
 
       $form['test'] = [
         '#type' => 'details',
@@ -129,12 +154,6 @@ class NodeTabForm extends FormBase {
         '#type' => 'details',
         '#open' => TRUE,
         '#title' => $this->t('Send'),
-      ];
-
-      // Add some text to describe the send situation.
-      $form['send']['count'] = [
-        '#type' => 'item',
-        '#markup' => $this->t('Send newsletter issue to %s with @count subscribers.', ['@count' => $summary['count'], '%s' => $NAME_OF_NEWSLETTER]),
       ];
 
       if (!$node->isPublished()) {
