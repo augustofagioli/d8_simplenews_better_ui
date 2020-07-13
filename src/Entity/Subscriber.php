@@ -370,14 +370,9 @@ class Subscriber extends ContentEntityBase implements SubscriberInterface {
       ->setSetting('target_type', 'user')
       ->setSetting('handler', 'default');
 
-
-    //https://www.drupal.org/project/simplenews/issues/3153612
-    // We use language to contacting a subscriber on her/his favourite language
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language'))
       ->setDescription(t("The subscriber's preferred language."));
-
-
 
     $fields['changes'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Changes'))

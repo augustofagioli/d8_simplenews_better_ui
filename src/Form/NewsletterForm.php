@@ -18,8 +18,6 @@ class NewsletterForm extends EntityForm {
     $form = parent::form($form, $form_state);
 
     $newsletter = $this->entity;
-    //echo "newsletterr details";
-    //dump($newsletter);exit;
 
     $form['name'] = [
       '#type' => 'textfield',
@@ -99,7 +97,7 @@ class NewsletterForm extends EntityForm {
       '#title' => $this->t('Language'),
       '#options' => $options,
       '#default_value' => $newsletter->lang,
-      '#description' => $this->t('The Subscriber reading language. Subscribers expect News written in this language'),
+      '#description' => $this->t('The reader language for this Newsletter. People subscribing this newsletter expect to read news in this language.'),
     ];
 
     $form['email'] = [
@@ -226,11 +224,7 @@ class NewsletterForm extends EntityForm {
    * Overrides Drupal\Core\Entity\EntityForm::save().
    */
   public function save(array $form, FormStateInterface $form_state) {
-
     $newsletter = $this->entity;
-    //echo "newsletterr details pre safe";
-    //dump($newsletter);exit;
-
     $status = $newsletter->save();
 
     $edit_link = \Drupal::linkGenerator()->generate($this->t('Edit'), $this->entity->toUrl());

@@ -1,18 +1,4 @@
 
-Drupal 8 Simplenews NOMCS [No Multilanguge Content Support]
-
-We are working here for a usable release candidate to be posted  at https://www.drupal.org/project/simplenews
-
-
-
-***Find here  README.me  cloned https://www.drupal.org/project/simplenews/releases/8.x-2.x-dev ***
-
-
-
-
-
-
-
 DESCRIPTION
 -----------
 
@@ -93,14 +79,12 @@ INSTALLATION
  8. MULTILINGUAL SUPPORT
 
      *****************************************************************
-     UPDATE Jun20:  Multilanguge  content support is not a requirement
+     UPDATE Jul20:  Multilanguge  content support is not a requirement
      - https://www.drupal.org/project/simplenews/issues/3106374
      - https://www.drupal.org/project/simplenews/issues/3153545
      - https://www.drupal.org/project/simplenews/issues/3153612
      *****************************************************************
-
-
-
+    
     The confirmation mails can be translated by enableding the Simplenews variables at:
 
       Home > Administration > Configuration > Regional and language >
@@ -108,8 +92,6 @@ INSTALLATION
 
     Afterwards, the mail subject and body can be entered for every enabled
     language.
-
-
 
 9.  NEWSLETTER THEMING
 
@@ -124,7 +106,7 @@ INSTALLATION
       simplenews-newsletter-body--[newsletter_id]--[view mode].html.twig
 
       [newsletter_id]: Machine readable name of the newsletter category
-      [view mode]: 'email-plain', 'email-html', 'email-textalt'
+      [view mode]: 'email-plain', 'email-html'
       Example:
         simplenews-newsletter-body--1--email-plain.html.twig
 

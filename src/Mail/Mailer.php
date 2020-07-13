@@ -281,43 +281,10 @@ class Mailer implements MailerInterface {
           foreach ($ids as $entity_id => $languages) {
             $storage->resetCache([$entity_id]);
             $entity = $storage->load($entity_id);
-
-
-
-            // SEVERE ******************************************************************************************
-            // When a registerd subscriber language doesn't match node language, the send process breaks producing
-            // InvalidArgumentException: Invalid translation language (fr) specified.
-            // in Drupal\Core\Entity\ContentEntityBase->getTranslation()
-            //(linea 873 di /home/a/Public/d8_composer/web/core/lib/Drupal/Core/Entity/ContentEntityBase.php).
-
-            // There's no way  easy way to send to following users in list.
-            // https://www.drupal.org/project/simplenews/issues/3106374
-            // As per https://www.drupal.org/project/simplenews/issues/3153612
-            // we should remove "multilanguage content support"
             foreach ($languages as $langcode => $counts) {
-
-              // dummy fix for https://www.drupal.org/project/simplenews/issues/3106374:
-              //  ... get the newsleter langauge and limit to that.
-              if ($langcode=='it')  {
-
-                //  In sendSpool() remove the call to getTranslation() and instead update $entity->simplenews_issue.
-                //  $translation = $entity->getTranslation($langcode);
-
                 $entity->simplenews_issue->sent_count  += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
                 $entity->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
-
-
-
-              }
             }
-
-
-
-
-
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
             $entity->save();
           }
         }
@@ -457,7 +424,6 @@ class Mailer implements MailerInterface {
   /**
    * {@inheritdoc}
    */
-
   public function updateSendStatus() {
     // Number of pending emails in the spool.
     $counts = [];
@@ -472,7 +438,6 @@ class Mailer implements MailerInterface {
       ->condition('simplenews_issue.status', SIMPLENEWS_STATUS_SEND_PENDING)
       ->execute();
     $nodes = Node::loadMultiple($nids);
-
     if ($nodes) {
       foreach ($nodes as $nid => $node) {
         $newsletter_id = $node->simplenews_issue->target_id;

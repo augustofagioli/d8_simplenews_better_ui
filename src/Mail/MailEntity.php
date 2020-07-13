@@ -132,7 +132,7 @@ class MailEntity implements MailInterface {
 
     // Add user specific header data.
     $headers['From'] = $this->getFromFormatted();
-    $headers['List-Unsubscribe'] = '<' . \Drupal::token()->replace('[simplenews-subscriber:unsubscribe-url]', $this->getTokenContext(), ['sanitize' => FALSE]) . '>';
+    $headers['List-Unsubscribe'] = '<' . \Drupal::token()->replace('[simplenews-subscriber:unsubscribe-url]', $this->getTokenContext()) . '>';
 
     // Add general headers.
     $headers['Precedence'] = 'bulk';
@@ -217,7 +217,7 @@ class MailEntity implements MailInterface {
     // Build email subject and perform some sanitizing.
     // Use the requested language if enabled.
     $langcode = $this->getLanguage();
-    $subject = \Drupal::token()->replace($this->getNewsletter()->subject, $this->getTokenContext(), ['sanitize' => FALSE, 'langcode' => $langcode]);
+    $subject = simplenews_token_replace_subject($this->getNewsletter()->subject, $this->getTokenContext(), ['langcode' => $langcode]);
 
     // Line breaks are removed from the email subject to prevent injection of
     // malicious data into the email header.
@@ -249,7 +249,6 @@ class MailEntity implements MailInterface {
     if (\Drupal::moduleHandler()->moduleExists('i18n_select')) {
       $GLOBALS['language_content'] = $this->original_language;
     }
-
   }
 
   /**
@@ -269,7 +268,7 @@ class MailEntity implements MailInterface {
     }
 
     // Build message body
-    // Supported view modes: 'email_plain', 'email_html', 'email_textalt'.
+    // Supported view modes: 'email_plain', 'email_html'.
     $build = \Drupal::entityTypeManager()->getViewBuilder($this->getIssue()->getEntityTypeId())->view($this->getIssue(), 'email_' . $format, $this->getLanguage());
     $build['#entity_type'] = $this->getIssue()->getEntityTypeId();
     // @todo: Consider using render caching.

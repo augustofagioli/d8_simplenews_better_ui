@@ -41,8 +41,6 @@ interface MailerInterface {
    * @return int
    *   Returns the amount of sent mails.
    *
-   * @todo: Redesign API to allow language counter in multilingual sends.
-   * No, please. https://www.drupal.org/project/simplenews/issues/3153612
    */
   public function sendSpool($limit = SpoolStorageInterface::UNLIMITED, array $conditions = []);
 
@@ -85,7 +83,6 @@ interface MailerInterface {
    * Update newsletter sent status.
    *
    * Set newsletter sent status based on email sent status in spool table.
-   * Translated and untranslated nodes get a different treatment.
    *
    * The spool table holds data for emails to be sent and (optionally)
    * already send emails. The simplenews_newsletter table contains the overall
@@ -95,10 +92,6 @@ interface MailerInterface {
    * remains unsend. When no pending emails are found the newsletter status is
    * set 'send'.
    *
-   * Translated newsletters are a group of nodes that share the same tnid
-   * ({node}.tnid). Only one node of the group is found in the spool, but all
-   * nodes should share the same state. Therefore they are checked for the
-   * combined number of emails in the spool.
    */
   public function updateSendStatus();
 

@@ -13,8 +13,6 @@ use Drupal\simplenews\Mail\MailerInterface;
 use Drupal\simplenews\Spool\SpoolStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
-
 /**
  * Configure simplenews subscriptions of a user.
  */
@@ -97,12 +95,6 @@ class NodeTabForm extends FormBase {
     $newsletter_id = $node->get('simplenews_issue')->getValue()[0]['target_id'];
     $newsletter = Newsletter::load($newsletter_id);
 
-
-
-    //@TODO what's the current newsletter name?
-    $NAME_OF_NEWSLETTER = $newsletter->name;
-    $LANG_OF_NEWSLETTER = $newsletter->lang;
-
     $form['#title'] = $this->t('<em>Newsletter issue</em> @title', ['@title' => $node->getTitle()]);
 
     // We will need the node.
@@ -118,7 +110,7 @@ class NodeTabForm extends FormBase {
         '#title' => $this->t('Info'),
       ];
 
-      $tmp  = t('This newsletter issue  will be sent to:');
+      $tmp  = t('This newsletter issue will be sent to:');
       $tmp .= '<ul>';
       $tmp .= '<li>'.t('Newsletter')  . ": <b>" . $newsletter->name .'</b></li>';
       $tmp .= '<li>'.t('Language')    . ": <b>" . $newsletter->lang.'</b></li>';
@@ -179,9 +171,6 @@ class NodeTabForm extends FormBase {
       ];
     }
     else {
-
-
-
       $form['status'] = [
         '#type' => 'item',
         '#title' => $summary['description'],

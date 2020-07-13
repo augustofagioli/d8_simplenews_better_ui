@@ -166,21 +166,10 @@ class Newsletter extends ConfigEntityBase implements NewsletterInterface {
    * {@inheritdoc}
    */
   public static function preCreate(EntityStorageInterface $storage, array &$values) {
-
-    //echo "vedi storage";
-    //dump  ($storage);exit;
-
-
     $config = \Drupal::config('simplenews.settings');
-    //echo "vedi config";
-    //dump($config);exit;
 
-
-    // We are not able to set a language ni the yml file. Let's use the active language
+    // We are not able to set a language in the yml file. Let's use the active language
     $active_language = \Drupal::languageManager()->getCurrentLanguage()->getId();
-    //echo "active langauge";
-    //dump  ($active_language);exit;
-
 
     $values += [
       'format'       => $config->get('newsletter.format'),
@@ -190,11 +179,7 @@ class Newsletter extends ConfigEntityBase implements NewsletterInterface {
       'from_address' => $config->get('newsletter.from_address'),
       'lang'         => $active_language,
     ];
-
     parent::preCreate($storage, $values);
-
-    //echo "stamnap al anewsletter appena creata";
-    //dump ($this); exit;
   }
 
   /**

@@ -63,8 +63,6 @@ class IssueItem extends EntityReferenceItem {
       ->setLabel(t('Subscribers'))
       ->setSetting('unsigned', TRUE);
 
-
-
     return $properties;
   }
 
