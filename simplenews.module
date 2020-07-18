@@ -308,10 +308,13 @@ function simplenews_form_node_form_alter(&$form, FormStateInterface $form_state,
 
     $entitites = $node->get("simplenews_issue")->referencedEntities();
 
-    if ( $entitites[0]->getEntityTypeId() == "simplenews_newsletter" )  {
-      if ( isset($entitites[0]->lang) ) {
-        // warn editor about audience language
-        \Drupal::messenger()->addWarning(t('Subscribers expect content in the following language: %s' , Array("%s" => $entitites[0]->lang )));
+
+    if (!empty($entitites)) {
+      if ( $entitites[0]->getEntityTypeId() == "simplenews_newsletter" )  {
+        if ( isset($entitites[0]->lang) ) {
+          // warn editor about audience language
+          \Drupal::messenger()->addWarning(t('Subscribers expect content in the following language: %s' , Array("%s" => $entitites[0]->lang )));
+        }
       }
     }
   }
