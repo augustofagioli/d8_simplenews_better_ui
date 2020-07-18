@@ -1,4 +1,6 @@
 
+*** Simplenews NOMCS (NO Multilanguage Content Support) is currently updated also at https://github.com/augustofagioli/d8_simplenews_nomcs ***
+
 DESCRIPTION
 -----------
 
