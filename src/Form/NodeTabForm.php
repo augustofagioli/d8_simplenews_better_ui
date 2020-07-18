@@ -144,7 +144,7 @@ class NodeTabForm extends FormBase {
       ];
       $form['send'] = [
         '#type' => 'details',
-        '#open' => TRUE,
+        '#open' => FALSE, //2 clicks before sending out. Easy security improvment
         '#title' => $this->t('Send'),
       ];
 
