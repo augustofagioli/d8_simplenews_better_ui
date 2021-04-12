@@ -26,7 +26,7 @@ abstract class RecipientHandlerSelectBase extends RecipientHandlerBase {
     //     >>>>
     $query->addTag('sn1');
     //https://www.drupal.org/project/drupal/issues/3145292#comment-14054486
-    //$query->execute();
+    $query->execute();
     //dump($query->execute());
     //dump($query->sqlQuery->__toString());
     //exit;
