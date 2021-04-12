@@ -13,7 +13,6 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Render\Element;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
@@ -259,7 +258,7 @@ function simplenews_form_node_type_submit(array $form, FormStateInterface $form_
       'field_storage' => $field_storage,
       'label' => t('Issue'),
       'bundle' => $node_type->id(),
-      'translatable' => FALSE,
+      'translatable' => TRUE,
     ]);
     $field->save();
 
@@ -304,18 +303,6 @@ function simplenews_form_node_form_alter(&$form, FormStateInterface $form_state,
           'simplenews-newsletter', 'simplenews-subscriber', 'node',
         ],
       ];
-    }
-
-    $entitites = $node->get("simplenews_issue")->referencedEntities();
-
-
-    if (!empty($entitites)) {
-      if ( $entitites[0]->getEntityTypeId() == "simplenews_newsletter" )  {
-        if ( isset($entitites[0]->lang) ) {
-          // warn editor about audience language
-          \Drupal::messenger()->addWarning(t('Subscribers expect content in the following language: %s' , Array("%s" => $entitites[0]->lang )));
-        }
-      }
     }
   }
 }
@@ -597,7 +584,7 @@ function simplenews_mail($key, &$message, $params) {
 }
 
 /**
- * Get list of newsletters with translated names.
+ * Get list of simplenews categories with translated names.
  *
  * @todo Maybe refactor this method to simplenews_newsletter_name_list.
  *
@@ -714,7 +701,7 @@ function simplenews_help($route_name, RouteMatchInterface $route_match) {
       return $help;
 
     case 'simplenews.newsletter_list':
-      $help = '<p>' . t('Simplenews allows you to send periodic e-mails to subscribers. See <a href=":manage_subscribers">Newsletter subscriptions</a> for a listing of the subscribers', [':manage_subscribers' => Url::fromUri('base:admin/people/simplenews')->toString()]);
+      $help = '<p>' . t('Newsletter allow you to send periodic e-mails to subscribers. See <a href=":manage_subscribers">Newsletter subscriptions</a> for a listing of the subscribers', [':manage_subscribers' => Url::fromUri('base:admin/people/simplenews')->toString()]);
       return $help;
 
     case 'simplenews.newsletter_add':
@@ -723,7 +710,7 @@ function simplenews_help($route_name, RouteMatchInterface $route_match) {
 
     case 'entity.entity_view_display.node.default':
       $type = $route_match->getParameter('node_type');
-      $help = ($type->id() == 'simplenews_issue') ? '<p>' . t("'Email:HTML' display settings apply to the HTML content of emails sent in HTML format. 'Email:Plain' display settings apply to emails sent in plain text format and the plain text alternative content of emails sent in HTML format.") . "</p>\n" : '';
+      $help = ($type->id() == 'simplenews_issue') ? '<p>' . t("'Plain' display settings apply to the content of emails send in plain text format. 'HTML' display settings apply to both HTML and plain text alternative content of emails send in HTML format.") . "</p>\n" : '';
       return $help;
   }
 }
@@ -821,7 +808,9 @@ function template_preprocess_simplenews_newsletter_body(&$variables) {
 
   /** @var \Drupal\Core\Entity\FieldableEntityInterface $entity */
   $entity = !empty($elements['#' . $entity_type]) ? $elements['#' . $entity_type] : $elements['#entity'];
-
+  if ($elements['#language'] && $entity->hasTranslation($elements['#language'])) {
+    $entity = $entity->getTranslation($elements['#language']);
+  }
   $variables[$entity_type] = $entity;
 
   // Provide some common variables.
@@ -950,51 +939,4 @@ function simplenews_migrate_prepare_row(Row $row, MigrateSourceInterface $source
       $row->setSourceProperty('simplenews_content_type', unserialize($value));
     }
   }
-}
-
-/**
- * Replaces tokens in a mail subject line.
- *
- * This is a wrapper to Token::replace() for the email subject.
- *
- * @param string $text
- *   An HTML string containing replaceable tokens.
- * @param array $data
- *   (optional) An array of keyed objects.
- * @param array $options
- *   (optional) A keyed array of settings and flags to control the token
- *   replacement process.
- *
- * @return string
- *   String with tokens replaced.
- */
-function simplenews_token_replace_subject($text, array $data = [], array $options = []) {
-  // The input string must be escaped in case of special characters like &.
-  // The output must remain as markup. The surprising fact is that the Drupal
-  // mail system expects to receive markup and automatically decodes it.
-  return Markup::create(\Drupal::token()->replace(Html::escape($text), $data, $options));
-}
-
-/**
- * Replaces tokens in a mail body.
- *
- * This is a wrapper to Token::replace() for the email body.
- *
- * @param string $text
- *   An HTML string containing replaceable tokens.
- * @param array $data
- *   (optional) An array of keyed objects.
- * @param array $options
- *   (optional) A keyed array of settings and flags to control the token
- *   replacement process.
- *
- * @return string
- *   String with tokens replaced.
- */
-function simplenews_token_replace_body($text, array $data = [], array $options = []) {
-  // The input string must be formatted which is done using the fallback text
-  // formatter. The output must remain as markup. The default mail plugin will
-  // automatically convert to text. A plugin that supports HTML can send the
-  // markup directly.
-  return Markup::create(check_markup(\Drupal::token()->replace($text, $data, $options)));
 }

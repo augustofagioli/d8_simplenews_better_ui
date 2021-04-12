@@ -64,7 +64,9 @@ class MailEntity implements MailInterface {
   public function __construct(ContentEntityInterface $issue, SubscriberInterface $subscriber, MailCacheInterface $mail_cache) {
     $this->subscriber = $subscriber;
     $this->issue = $issue;
-
+    if ($this->issue->hasTranslation($this->getLanguage())) {
+      $this->issue = $this->issue->getTranslation($this->getLanguage());
+    }
     $this->cache = $mail_cache;
     $this->newsletter = $issue->simplenews_issue->entity;
   }
@@ -132,7 +134,7 @@ class MailEntity implements MailInterface {
 
     // Add user specific header data.
     $headers['From'] = $this->getFromFormatted();
-    $headers['List-Unsubscribe'] = '<' . \Drupal::token()->replace('[simplenews-subscriber:unsubscribe-url]', $this->getTokenContext()) . '>';
+    $headers['List-Unsubscribe'] = '<' . \Drupal::token()->replace('[simplenews-subscriber:unsubscribe-url]', $this->getTokenContext(), ['sanitize' => FALSE]) . '>';
 
     // Add general headers.
     $headers['Precedence'] = 'bulk';
@@ -217,7 +219,7 @@ class MailEntity implements MailInterface {
     // Build email subject and perform some sanitizing.
     // Use the requested language if enabled.
     $langcode = $this->getLanguage();
-    $subject = simplenews_token_replace_subject($this->getNewsletter()->subject, $this->getTokenContext(), ['langcode' => $langcode]);
+    $subject = \Drupal::token()->replace($this->getNewsletter()->subject, $this->getTokenContext(), ['sanitize' => FALSE, 'langcode' => $langcode]);
 
     // Line breaks are removed from the email subject to prevent injection of
     // malicious data into the email header.
@@ -234,6 +236,21 @@ class MailEntity implements MailInterface {
     if ($this->uid = $this->getSubscriber()->getUserId()) {
       \Drupal::service('account_switcher')->switchTo(User::load($this->uid));
     }
+
+    // Change language if the requested language is enabled.
+    // @codingStandardsIgnoreStart
+    /*$language = $this->getLanguage();
+    $languages = LanguageManagerInterface::getLanguages();
+    if (isset($languages[$language])) {
+      $this->original_language = \Drupal::languageManager()->getCurrentLanguage();
+      $GLOBALS['language'] = $languages[$language];
+      $GLOBALS['language_url'] = $languages[$language];
+      // Overwrites the current content language for i18n_select.
+      if (\Drupal::moduleHandler()->moduleExists('i18n_select')) {
+        $GLOBALS['language_content'] = $languages[$language];
+      }
+    }*/
+    // @codingStandardsIgnoreEnd
   }
 
   /**
@@ -246,8 +263,13 @@ class MailEntity implements MailInterface {
       \Drupal::service('account_switcher')->switchBack();
     }
 
-    if (\Drupal::moduleHandler()->moduleExists('i18n_select')) {
-      $GLOBALS['language_content'] = $this->original_language;
+    // Switch language back.
+    if (!empty($this->original_language)) {
+      $GLOBALS['language'] = $this->original_language;
+      $GLOBALS['language_url'] = $this->original_language;
+      if (\Drupal::moduleHandler()->moduleExists('i18n_select')) {
+        $GLOBALS['language_content'] = $this->original_language;
+      }
     }
   }
 
@@ -268,7 +290,7 @@ class MailEntity implements MailInterface {
     }
 
     // Build message body
-    // Supported view modes: 'email_plain', 'email_html'.
+    // Supported view modes: 'email_plain', 'email_html', 'email_textalt'.
     $build = \Drupal::entityTypeManager()->getViewBuilder($this->getIssue()->getEntityTypeId())->view($this->getIssue(), 'email_' . $format, $this->getLanguage());
     $build['#entity_type'] = $this->getIssue()->getEntityTypeId();
     // @todo: Consider using render caching.

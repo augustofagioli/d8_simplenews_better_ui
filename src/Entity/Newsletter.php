@@ -41,7 +41,6 @@ use Drupal\simplenews\NewsletterInterface;
  *     "allowed_handlers",
  *     "new_account",
  *     "opt_inout",
- *     "lang",
  *     "weight",
  *   },
  *   links = {
@@ -145,16 +144,6 @@ class Newsletter extends ConfigEntityBase implements NewsletterInterface {
    */
   public $opt_inout = 'double';
 
-
-  /**
-   * Defines the Newsletter language.
-   *
-   * @var string
-   */
-  public $lang ;
-
-
-
   /**
    * Weight of this newsletter (used for sorting).
    *
@@ -167,17 +156,12 @@ class Newsletter extends ConfigEntityBase implements NewsletterInterface {
    */
   public static function preCreate(EntityStorageInterface $storage, array &$values) {
     $config = \Drupal::config('simplenews.settings');
-
-    // We are not able to set a language in the yml file. Let's use the active language
-    $active_language = \Drupal::languageManager()->getCurrentLanguage()->getId();
-
     $values += [
-      'format'       => $config->get('newsletter.format'),
-      'priority'     => $config->get('newsletter.priority'),
-      'receipt'      => $config->get('newsletter.receipt'),
-      'from_name'    => $config->get('newsletter.from_name'),
+      'format' => $config->get('newsletter.format'),
+      'priority' => $config->get('newsletter.priority'),
+      'receipt' => $config->get('newsletter.receipt'),
+      'from_name' => $config->get('newsletter.from_name'),
       'from_address' => $config->get('newsletter.from_address'),
-      'lang'         => $active_language,
     ];
     parent::preCreate($storage, $values);
   }

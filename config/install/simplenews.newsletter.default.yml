@@ -11,7 +11,6 @@ hyperlinks: FALSE
 allowed_handlers: {  }
 new_account: none
 opt_inout: double
-lang: ''
 weight: 0
 status: true
 langcode: en

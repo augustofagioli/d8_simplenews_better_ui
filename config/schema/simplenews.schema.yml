@@ -25,9 +25,6 @@ simplenews.settings:
         from_name:
           type: label
           label: Default from name
-        lang:
-          type: label
-          label: Subscribers language
 
     subscriber:
       type: mapping
@@ -96,9 +93,6 @@ simplenews.settings:
         use_cron:
           type: boolean
           label: Use cron
-        textalt:
-          type: boolean
-          label: Generate plain-text alternative
         throttle:
           type: integer
           label: Mails to send per cron run
@@ -159,9 +153,6 @@ simplenews.newsletter.*:
     opt_inout:
       type: string
       label: 'Defines the Opt-In/out options.'
-    lang:
-      type: string
-      label: 'Define the language for this Newsletter'
     weight:
       type: integer
       label: 'Weight of this newsletter (used for sorting).'

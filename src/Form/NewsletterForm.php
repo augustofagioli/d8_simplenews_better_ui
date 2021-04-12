@@ -86,20 +86,6 @@ class NewsletterForm extends EntityForm {
       '#description' => $this->t('Hidden: This newsletter does not appear on subscription forms. No unsubscription footer in newsletter.<br /> Single: Users are (un)subscribed immediately, no confirmation email is sent.<br />Double: When (un)subscribing at a subscription form, anonymous users receive an (un)subscription confirmation email. Authenticated users are (un)subscribed immediately.'),
     ];
 
-    $langcodes = \Drupal::languageManager()->getLanguages();
-    $options = Array();
-    foreach  ($langcodes as $lang) {
-      $options[$lang->getId()] = $lang->getName();
-    }
-
-    $form['subscription']['lang'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Language'),
-      '#options' => $options,
-      '#default_value' => $newsletter->lang,
-      '#description' => $this->t('The reader language for this Newsletter. People subscribing this newsletter expect to read news in this language.'),
-    ];
-
     $form['email'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('Email settings'),

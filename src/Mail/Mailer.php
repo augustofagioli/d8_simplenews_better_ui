@@ -282,8 +282,9 @@ class Mailer implements MailerInterface {
             $storage->resetCache([$entity_id]);
             $entity = $storage->load($entity_id);
             foreach ($languages as $langcode => $counts) {
-                $entity->simplenews_issue->sent_count  += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
-                $entity->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
+              $translation = $entity->getTranslation($langcode);
+              $translation->simplenews_issue->sent_count += $counts[SpoolStorageInterface::STATUS_DONE] ?? 0;
+              $translation->simplenews_issue->error_count += $counts[SpoolStorageInterface::STATUS_FAILED] ?? 0;
             }
             $entity->save();
           }
@@ -427,7 +428,7 @@ class Mailer implements MailerInterface {
   public function updateSendStatus() {
     // Number of pending emails in the spool.
     $counts = [];
-    // Sum of emails in the spool
+    // Sum of emails in the spool per tnid (translation id)
     $sum = [];
     // Nodes with the status 'send'.
     $send = [];
@@ -440,15 +441,22 @@ class Mailer implements MailerInterface {
     $nodes = Node::loadMultiple($nids);
     if ($nodes) {
       foreach ($nodes as $nid => $node) {
-        $newsletter_id = $node->simplenews_issue->target_id;
-        $counts[$newsletter_id][$nid] = $this->spoolStorage->countMails(['entity_id' => $nid, 'entity_type' => 'node']);
+        $counts[$node->simplenews_issue->target_id][$nid] = $this->spoolStorage->countMails(['entity_id' => $nid, 'entity_type' => 'node']);
       }
     }
-
-    foreach ($counts as $newsletter_issue_id => $node_count) {
-      $sum[$newsletter_issue_id] = array_sum($node_count);
+    // Determine which nodes are sent per translation group and individual node.
+    foreach ($counts as $newsletter_id => $node_count) {
+      // The sum of emails per tnid is the combined status result for the group
+      // of translated nodes. Untranslated nodes have tnid == 0 which will be
+      // ignored later.
+      $sum[$newsletter_id] = array_sum($node_count);
       foreach ($node_count as $nid => $count) {
-        if ($newsletter_issue_id != '0' && $sum[$newsletter_issue_id] == '0') {
+        // Translated nodes (tnid != 0)
+        if ($newsletter_id != '0' && $sum[$newsletter_id] == '0') {
+          $send[] = $nid;
+        }
+        // Untranslated nodes (tnid == 0)
+        elseif ($newsletter_id == '0' && $count == '0') {
           $send[] = $nid;
         }
       }
@@ -512,4 +520,5 @@ class Mailer implements MailerInterface {
 
     return $now - $this->startTime;
   }
+
 }

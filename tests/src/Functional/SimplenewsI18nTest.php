@@ -103,104 +103,103 @@ class SimplenewsI18nTest extends SimplenewsTestBase {
   /**
    * Test newsletter issue translations.
    */
-    // Not a requirement. See https://www.drupal.org/project/simplenews/issues/3106374
-    //   public function testNewsletterIssueTranslation() {
-    //     // Sign up three users, one in english and two in spanish.
-    //     $english_mail = $this->randomEmail();
-    //     $spanish_mail = $this->randomEmail();
-    //     $spanish_mail2 = $this->randomEmail();
-    //     $newsletter_id = $this->getRandomNewsletter();
-    // 
-    //     /** @var \Drupal\simplenews\Subscription\SubscriptionManagerInterface $subscription_manager */
-    //     $subscription_manager = \Drupal::service('simplenews.subscription_manager');
-    // 
-    //     $subscription_manager->subscribe($english_mail, $newsletter_id, FALSE, 'english', 'en');
-    //     $subscription_manager->subscribe($spanish_mail, $newsletter_id, FALSE, 'spanish', 'es');
-    //     $subscription_manager->subscribe($spanish_mail2, $newsletter_id, FALSE, 'spanish', 'es');
-    // 
-    //     // Enable translation for newsletters.
-    //     $edit = [
-    //       'language_configuration[content_translation]' => TRUE,
-    //     ];
-    //     $this->drupalPostForm('admin/structure/types/manage/simplenews_issue', $edit, t('Save content type'));
-    // 
-    //     // Create a Newsletter including a translation.
-    //     $newsletter_id = $this->getRandomNewsletter();
-    //     $english = [
-    //       'title[0][value]' => $this->randomMachineName(),
-    //       'simplenews_issue[target_id]' => $newsletter_id,
-    //       'body[0][value]' => 'Link to node: [node:url]',
-    //     ];
-    //     $this->drupalPostForm('node/add/simplenews_issue', $english, ('Save'));
-    //     $this->assertEqual(1, preg_match('|node/(\d+)$|', $this->getUrl(), $matches), 'Node created');
-    //     $node = Node::load($matches[1]);
-    // 
-    //     $this->clickLink(t('Translate'));
-    //     $this->clickLink(t('Add'));
-    //     $spanish = [
-    //       'title[0][value]' => $this->randomMachineName(),
-    //       'body[0][value]' => 'Link to node: [node:url] ES',
-    //     ];
-    //     $this->drupalPostForm(NULL, $spanish, t('Save (this translation)'));
-    // 
-    //     \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
-    //     $node = Node::load($node->id());
-    //     $translation = $node->getTranslation($this->secondaryLanguage);
-    // 
-    //     // Send newsletter.
-    //     $this->clickLink(t('Newsletter'));
-    //     $this->drupalPostForm(NULL, [], t('Send now'));
-    //     $this->cronRun();
-    //     // @codingStandardsIgnoreLine
-    //     //simplenews_cron();
-    // 
-    //     $this->assertEqual(3, count($this->getMails()));
-    // 
-    //     $newsletter = Newsletter::load($newsletter_id);
-    //     foreach ($this->getMails() as $mail) {
-    // 
-    //       if ($mail['to'] == $english_mail) {
-    //         $this->assertEqual('en', $mail['langcode']);
-    //         $this->assertEqual('[' . $newsletter->label() . '] ' . $node->getTitle(), $mail['subject']);
-    //         $node_url = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
-    //         $title = $node->getTitle();
-    //       }
-    //       elseif ($mail['to'] == $spanish_mail || $mail['to'] == $spanish_mail2) {
-    //         $this->assertEqual('es', $mail['langcode']);
-    //         // @todo: Verify newsletter translation once supported again.
-    //         $this->assertEqual('[' . $newsletter->name . '] ' . $translation->label(), $mail['subject']);
-    //         $node_url = $translation->toUrl('canonical', ['absolute' => TRUE, 'language' => $translation->language()])->toString();
-    //         $title = $translation->getTitle();
-    //       }
-    //       else {
-    //         $this->fail(t('Mail not sent to expected recipient'));
-    //       }
-    // 
-    //       // Verify that the link is in the correct language.
-    //       $this->assertTrue(strpos($mail['body'], $node_url) !== FALSE);
-    //       // The <h1> tag is converted to uppercase characters.
-    //       $this->assertTrue(strpos($mail['body'], mb_strtoupper($title)) !== FALSE);
-    //     }
-    // 
-    //     // Verify sent subscriber count for each node.
-    //     \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
-    //     $node = Node::load($node->id());
-    //     $translation = $node->getTranslation($this->secondaryLanguage);
-    //     $this->assertEqual(1, $node->simplenews_issue->sent_count, 'subscriber count is correct for english');
-    //     $this->assertEqual(2, $translation->simplenews_issue->sent_count, 'subscriber count is correct for spanish');
-    // 
-    //     // Make sure the language of a node can be changed.
-    //     $english = [
-    //       'title[0][value]' => $this->randomMachineName(),
-    //       'langcode[0][value]' => 'en',
-    //       'body[0][value]' => 'Link to node: [node:url]',
-    //     ];
-    //     $this->drupalPostForm('node/add/simplenews_issue', $english, ('Save'));
-    //     $this->clickLink(t('Edit'));
-    //     $edit = [
-    //       'langcode[0][value]' => 'es',
-    //     ];
-    //     $this->drupalPostForm(NULL, $edit, t('Save'));
-    //   }
+  public function testNewsletterIssueTranslation() {
+    // Sign up three users, one in english and two in spanish.
+    $english_mail = $this->randomEmail();
+    $spanish_mail = $this->randomEmail();
+    $spanish_mail2 = $this->randomEmail();
+    $newsletter_id = $this->getRandomNewsletter();
+
+    /** @var \Drupal\simplenews\Subscription\SubscriptionManagerInterface $subscription_manager */
+    $subscription_manager = \Drupal::service('simplenews.subscription_manager');
+
+    $subscription_manager->subscribe($english_mail, $newsletter_id, FALSE, 'english', 'en');
+    $subscription_manager->subscribe($spanish_mail, $newsletter_id, FALSE, 'spanish', 'es');
+    $subscription_manager->subscribe($spanish_mail2, $newsletter_id, FALSE, 'spanish', 'es');
+
+    // Enable translation for newsletters.
+    $edit = [
+      'language_configuration[content_translation]' => TRUE,
+    ];
+    $this->drupalPostForm('admin/structure/types/manage/simplenews_issue', $edit, t('Save content type'));
+
+    // Create a Newsletter including a translation.
+    $newsletter_id = $this->getRandomNewsletter();
+    $english = [
+      'title[0][value]' => $this->randomMachineName(),
+      'simplenews_issue[target_id]' => $newsletter_id,
+      'body[0][value]' => 'Link to node: [node:url]',
+    ];
+    $this->drupalPostForm('node/add/simplenews_issue', $english, ('Save'));
+    $this->assertEqual(1, preg_match('|node/(\d+)$|', $this->getUrl(), $matches), 'Node created');
+    $node = Node::load($matches[1]);
+
+    $this->clickLink(t('Translate'));
+    $this->clickLink(t('Add'));
+    $spanish = [
+      'title[0][value]' => $this->randomMachineName(),
+      'body[0][value]' => 'Link to node: [node:url] ES',
+    ];
+    $this->drupalPostForm(NULL, $spanish, t('Save (this translation)'));
+
+    \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+    $node = Node::load($node->id());
+    $translation = $node->getTranslation($this->secondaryLanguage);
+
+    // Send newsletter.
+    $this->clickLink(t('Newsletter'));
+    $this->drupalPostForm(NULL, [], t('Send now'));
+    $this->cronRun();
+    // @codingStandardsIgnoreLine
+    //simplenews_cron();
+
+    $this->assertEqual(3, count($this->getMails()));
+
+    $newsletter = Newsletter::load($newsletter_id);
+    foreach ($this->getMails() as $mail) {
+
+      if ($mail['to'] == $english_mail) {
+        $this->assertEqual('en', $mail['langcode']);
+        $this->assertEqual('[' . $newsletter->label() . '] ' . $node->getTitle(), $mail['subject']);
+        $node_url = $node->toUrl('canonical', ['absolute' => TRUE])->toString();
+        $title = $node->getTitle();
+      }
+      elseif ($mail['to'] == $spanish_mail || $mail['to'] == $spanish_mail2) {
+        $this->assertEqual('es', $mail['langcode']);
+        // @todo: Verify newsletter translation once supported again.
+        $this->assertEqual('[' . $newsletter->name . '] ' . $translation->label(), $mail['subject']);
+        $node_url = $translation->toUrl('canonical', ['absolute' => TRUE, 'language' => $translation->language()])->toString();
+        $title = $translation->getTitle();
+      }
+      else {
+        $this->fail(t('Mail not sent to expected recipient'));
+      }
+
+      // Verify that the link is in the correct language.
+      $this->assertTrue(strpos($mail['body'], $node_url) !== FALSE);
+      // The <h1> tag is converted to uppercase characters.
+      $this->assertTrue(strpos($mail['body'], mb_strtoupper($title)) !== FALSE);
+    }
+
+    // Verify sent subscriber count for each node.
+    \Drupal::entityTypeManager()->getStorage('node')->resetCache([$node->id()]);
+    $node = Node::load($node->id());
+    $translation = $node->getTranslation($this->secondaryLanguage);
+    $this->assertEqual(1, $node->simplenews_issue->sent_count, 'subscriber count is correct for english');
+    $this->assertEqual(2, $translation->simplenews_issue->sent_count, 'subscriber count is correct for spanish');
+
+    // Make sure the language of a node can be changed.
+    $english = [
+      'title[0][value]' => $this->randomMachineName(),
+      'langcode[0][value]' => 'en',
+      'body[0][value]' => 'Link to node: [node:url]',
+    ];
+    $this->drupalPostForm('node/add/simplenews_issue', $english, ('Save'));
+    $this->clickLink(t('Edit'));
+    $edit = [
+      'langcode[0][value]' => 'es',
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save'));
+  }
 
 }

@@ -63,9 +63,7 @@ class SimplenewsAdministrationTest extends SimplenewsTestBase {
 
     $this->drupalGet('admin/config/services/simplenews');
     // Check if the help text is displayed.
-    
-    //grammar fix
-    $this->assertText('Simplenews allows you to send periodic e-mails to subscribers.');
+    $this->assertText('Newsletter allow you to send periodic e-mails to subscribers.');
 
     // Create a newsletter for all possible setting combinations.
     $new_account = ['none', 'off', 'on', 'silent'];
@@ -735,134 +733,133 @@ class SimplenewsAdministrationTest extends SimplenewsTestBase {
   /**
    * Test content type configuration.
    */
-    // See https://www.drupal.org/pift-ci-job/1762272
-    //   public function testContentTypes() {
-    //     $admin_user = $this->drupalCreateUser([
-    //       'administer blocks',
-    //       'administer content types',
-    //       'administer nodes',
-    //       'access administration pages',
-    //       'administer permissions',
-    //       'administer newsletters',
-    //       'administer simplenews subscriptions',
-    //       'bypass node access',
-    //       'send newsletter',
-    //     ]);
-    //     $this->drupalLogin($admin_user);
-    // 
-    //     $this->drupalGet('admin/structure/types');
-    //     $this->clickLink(t('Add content type'));
-    //     $name = $this->randomMachineName();
-    //     $type = strtolower($name);
-    //     $edit = [
-    //       'name' => $name,
-    //       'type' => $type,
-    //       'simplenews_content_type' => TRUE,
-    //     ];
-    //     $this->drupalPostForm(NULL, $edit, t('Save content type'));
-    // 
-    //     // Verify that the newsletter settings are shown.
-    //     $this->drupalGet('node/add/' . $type);
-    //     $this->assertText(t('Issue'));
-    // 
-    //     // Create an issue.
-    //     $edit = [
-    //       'title[0][value]' => $this->randomMachineName(),
-    //       'body[0][value]' => 'User ID: [current-user:uid]',
-    //       'simplenews_issue[target_id]' => $this->getRandomNewsletter(),
-    //     ];
-    //     $this->drupalPostForm(NULL, $edit, ('Save'));
-    // 
-    //     $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
-    // 
-    //     $edit = [
-    //       'title[0][value]' => $this->randomMachineName(),
-    //       'body[0][value]' => 'Sample body text - Newsletter issue',
-    //       'simplenews_issue[target_id]' => $this->getRandomNewsletter(),
-    //     ];
-    //     $this->drupalPostForm('node/add/simplenews_issue', $edit, ('Save'));
-    // 
-    //     // Assert that body text is displayed.
-    //     $this->assertText('Sample body text - Newsletter issue');
-    // 
-    //     $node2 = $this->drupalGetNodeByTitle($edit['title[0][value]']);
-    // 
-    //     // Assert subscriber count.
-    //     $this->clickLink(t('Newsletter'));
-    //     $this->assertText(t('Send newsletter issue to 0 subscribers.'));
-    // 
-    //     // Create some subscribers.
-    //     $subscribers = [];
-    //     for ($i = 0; $i < 3; $i++) {
-    //       $subscribers[] = Subscriber::create(['mail' => $this->randomEmail()]);
-    //     }
-    //     foreach ($subscribers as $subscriber) {
-    //       $subscriber->setStatus(TRUE);
-    //     }
-    // 
-    //     // Subscribe to the default newsletter and set subscriber status.
-    //     $subscribers[0]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
-    //     $subscribers[1]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
-    //     $subscribers[2]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
-    // 
-    //     foreach ($subscribers as $subscriber) {
-    //       $subscriber->save();
-    //     }
-    // 
-    //     // Check if the subscribers are listed in the newsletter tab.
-    //     $this->drupalGet('node/1/simplenews');
-    //     $this->assertText('Send newsletter issue to 3 subscribers.');
-    // 
-    //     // Send mails.
-    //     $this->assertField('test_address', $admin_user->getEmail());
-    //     // Test newsletter to empty address and check the error message.
-    //     $this->drupalPostForm(NULL, ['test_address' => ''], t('Send test newsletter issue'));
-    //     $this->assertText(t('Missing test email address.'));
-    //     // Test newsletter to invalid address and check the error message.
-    //     $this->drupalPostForm(NULL, ['test_address' => 'invalid_address'], t('Send test newsletter issue'));
-    //     $this->assertText(t('Invalid email address "invalid_address"'));
-    //     $this->drupalPostForm(NULL, ['test_address' => $admin_user->getEmail()], t('Send test newsletter issue'));
-    //     $this->assertText(t('Test newsletter sent to user @name &lt;@email&gt;', ['@name' => $admin_user->getAccountName(), '@email' => $admin_user->getEmail()]));
-    // 
-    //     $mails = $this->getMails();
-    //     $this->assertEqual('simplenews_test', $mails[0]['id']);
-    //     $this->assertEqual($admin_user->getEmail(), $mails[0]['to']);
-    //     $this->assertEqual(t('[Default newsletter] @title', ['@title' => $node->getTitle()]), $mails[0]['subject']);
-    //     $this->assertTrue(strpos($mails[0]['body'], 'User ID: ' . $admin_user->id()) !== FALSE);
-    // 
-    //     // Update the content type, remove the simpletest checkbox.
-    //     $edit = [
-    //       'simplenews_content_type' => FALSE,
-    //     ];
-    //     $this->drupalPostForm('admin/structure/types/manage/' . $type, $edit, t('Save content type'));
-    // 
-    //     // Verify that the newsletter settings are still shown.
-    //     // Note: Previously the field got autoremoved. We leave it remaining due to
-    //     // potential data loss.
-    //     $this->drupalGet('node/add/' . $type);
-    //     $this->assertNoText(t('Replacement patterns'));
-    //     $this->assertText(t('Issue'));
-    // 
-    //     // Test the visibility of subscription user component.
-    //     $this->drupalGet('node/' . $node->id());
-    //     $this->assertNoText('Subscribed to');
-    // 
-    //     // Delete created nodes.
-    //     $node->delete();
-    //     $node2->delete();
-    // 
-    //     // @todo: Test node update/delete.
-    //     // Delete content type.
-    //     // @todo: Add assertions.
-    //     $this->drupalPostForm('admin/structure/types/manage/' . $type . '/delete', [], t('Delete'));
-    // 
-    //     // Check the Add Newsletter Issue button.
-    //     $this->drupalGet('admin/content/simplenews');
-    //     $this->clickLink(t('Add Newsletter Issue'));
-    //     $this->assertUrl('node/add/simplenews_issue');
-    //     // Check if the help text is displayed.
-    //     $this->assertText('Add this newsletter issue to a newsletter by selecting a newsletter from the select list.');
-    //   }
+  public function testContentTypes() {
+    $admin_user = $this->drupalCreateUser([
+      'administer blocks',
+      'administer content types',
+      'administer nodes',
+      'access administration pages',
+      'administer permissions',
+      'administer newsletters',
+      'administer simplenews subscriptions',
+      'bypass node access',
+      'send newsletter',
+    ]);
+    $this->drupalLogin($admin_user);
+
+    $this->drupalGet('admin/structure/types');
+    $this->clickLink(t('Add content type'));
+    $name = $this->randomMachineName();
+    $type = strtolower($name);
+    $edit = [
+      'name' => $name,
+      'type' => $type,
+      'simplenews_content_type' => TRUE,
+    ];
+    $this->drupalPostForm(NULL, $edit, t('Save content type'));
+
+    // Verify that the newsletter settings are shown.
+    $this->drupalGet('node/add/' . $type);
+    $this->assertText(t('Issue'));
+
+    // Create an issue.
+    $edit = [
+      'title[0][value]' => $this->randomMachineName(),
+      'body[0][value]' => 'User ID: [current-user:uid]',
+      'simplenews_issue[target_id]' => $this->getRandomNewsletter(),
+    ];
+    $this->drupalPostForm(NULL, $edit, ('Save'));
+
+    $node = $this->drupalGetNodeByTitle($edit['title[0][value]']);
+
+    $edit = [
+      'title[0][value]' => $this->randomMachineName(),
+      'body[0][value]' => 'Sample body text - Newsletter issue',
+      'simplenews_issue[target_id]' => $this->getRandomNewsletter(),
+    ];
+    $this->drupalPostForm('node/add/simplenews_issue', $edit, ('Save'));
+
+    // Assert that body text is displayed.
+    $this->assertText('Sample body text - Newsletter issue');
+
+    $node2 = $this->drupalGetNodeByTitle($edit['title[0][value]']);
+
+    // Assert subscriber count.
+    $this->clickLink(t('Newsletter'));
+    $this->assertText(t('Send newsletter issue to 0 subscribers.'));
+
+    // Create some subscribers.
+    $subscribers = [];
+    for ($i = 0; $i < 3; $i++) {
+      $subscribers[] = Subscriber::create(['mail' => $this->randomEmail()]);
+    }
+    foreach ($subscribers as $subscriber) {
+      $subscriber->setStatus(TRUE);
+    }
+
+    // Subscribe to the default newsletter and set subscriber status.
+    $subscribers[0]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
+    $subscribers[1]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
+    $subscribers[2]->subscribe('default', SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED);
+
+    foreach ($subscribers as $subscriber) {
+      $subscriber->save();
+    }
+
+    // Check if the subscribers are listed in the newsletter tab.
+    $this->drupalGet('node/1/simplenews');
+    $this->assertText('Send newsletter issue to 3 subscribers.');
+
+    // Send mails.
+    $this->assertField('test_address', $admin_user->getEmail());
+    // Test newsletter to empty address and check the error message.
+    $this->drupalPostForm(NULL, ['test_address' => ''], t('Send test newsletter issue'));
+    $this->assertText(t('Missing test email address.'));
+    // Test newsletter to invalid address and check the error message.
+    $this->drupalPostForm(NULL, ['test_address' => 'invalid_address'], t('Send test newsletter issue'));
+    $this->assertText(t('Invalid email address "invalid_address"'));
+    $this->drupalPostForm(NULL, ['test_address' => $admin_user->getEmail()], t('Send test newsletter issue'));
+    $this->assertText(t('Test newsletter sent to user @name &lt;@email&gt;', ['@name' => $admin_user->getAccountName(), '@email' => $admin_user->getEmail()]));
+
+    $mails = $this->getMails();
+    $this->assertEqual('simplenews_test', $mails[0]['id']);
+    $this->assertEqual($admin_user->getEmail(), $mails[0]['to']);
+    $this->assertEqual(t('[Default newsletter] @title', ['@title' => $node->getTitle()]), $mails[0]['subject']);
+    $this->assertTrue(strpos($mails[0]['body'], 'User ID: ' . $admin_user->id()) !== FALSE);
+
+    // Update the content type, remove the simpletest checkbox.
+    $edit = [
+      'simplenews_content_type' => FALSE,
+    ];
+    $this->drupalPostForm('admin/structure/types/manage/' . $type, $edit, t('Save content type'));
+
+    // Verify that the newsletter settings are still shown.
+    // Note: Previously the field got autoremoved. We leave it remaining due to
+    // potential data loss.
+    $this->drupalGet('node/add/' . $type);
+    $this->assertNoText(t('Replacement patterns'));
+    $this->assertText(t('Issue'));
+
+    // Test the visibility of subscription user component.
+    $this->drupalGet('node/' . $node->id());
+    $this->assertNoText('Subscribed to');
+
+    // Delete created nodes.
+    $node->delete();
+    $node2->delete();
+
+    // @todo: Test node update/delete.
+    // Delete content type.
+    // @todo: Add assertions.
+    $this->drupalPostForm('admin/structure/types/manage/' . $type . '/delete', [], t('Delete'));
+
+    // Check the Add Newsletter Issue button.
+    $this->drupalGet('admin/content/simplenews');
+    $this->clickLink(t('Add Newsletter Issue'));
+    $this->assertUrl('node/add/simplenews_issue');
+    // Check if the help text is displayed.
+    $this->assertText('Add this newsletter issue to a newsletter by selecting a newsletter from the select list.');
+  }
 
   /**
    * Test content subscription status filter in subscriber view.
