@@ -21,8 +21,18 @@ abstract class RecipientHandlerSelectBase extends RecipientHandlerBase {
     $query->addExpression($this->issue->id(), 'entity_id');
     $query->addExpression(SIMPLENEWS_SUBSCRIPTION_STATUS_SUBSCRIBED, 'status');
     $query->addExpression(REQUEST_TIME, 'timestamp');
+    //     *************************************************************************
+    //     SN - Subscriber filters
+    //     >>>>
+    $query->addTag('sn1');
+    //https://www.drupal.org/project/drupal/issues/3145292#comment-14054486
+    //$query->execute();
+    //dump($query->execute());
+    //dump($query->sqlQuery->__toString());
+    //exit;
+    //     <<<<
+    //     *************************************************************************
     $this->connection->insert('simplenews_mail_spool')->from($query)->execute();
-
     return $query->countQuery()->execute()->fetchField();
   }
 

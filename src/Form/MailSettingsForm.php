@@ -73,6 +73,16 @@ class MailSettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('mail.debug'),
       '#description' => $this->t('When checked all outgoing simplenews emails are logged in the system log. A logged success does not guarantee delivery. The default PHP mail() function returns success without waiting to check if the mail can be delivered.'),
     ];
+
+    $form['simplenews_mail_backend']['simplenews_hostname_whitelist'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Hostname white list'),
+      '#description' => $this->t('Only send from hostnames in the comma-separated list (Example: "drupal.org, api.drupal.org")'),
+      '#size' => 60,
+      '#maxlength' => 128,
+      '#default_value' => $config->get('mail.host_whitelist'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -86,6 +96,7 @@ class MailSettingsForm extends ConfigFormBase {
       ->set('mail.throttle', $form_state->getValue('simplenews_throttle'))
       ->set('mail.spool_expire', $form_state->getValue('simplenews_spool_expire'))
       ->set('mail.debug', $form_state->getValue('simplenews_debug'))
+      ->set('mail.host_whitelist', $form_state->getValue('simplenews_hostname_whitelist'))
       ->save();
 
     parent::submitForm($form, $form_state);

@@ -314,13 +314,21 @@ function simplenews_form_node_form_alter(&$form, FormStateInterface $form_state,
  *   TRUE if the URI is set, otherwise FALSE.
  */
 function simplenews_assert_uri() {
-  $host = \Drupal::request()->getHost();
-  // Check if the host name is configured.
-  if ($host == 'default') {
-    \Drupal::logger('simplenews')->error('Stop sending newsletter to avoid broken links / SPAM. Site URI not specified.');
-    return FALSE;
+
+  $config = \Drupal::config('simplenews.settings');
+  $current_host = \Drupal::request()->getHost();
+  $current_host_can_send = FALSE;
+  $hosts =  explode(",", $config->get('mail.host_whitelist'));
+
+  foreach ($hosts as $allowed) {
+    if (trim($allowed) == $current_host){
+      return TRUE;
+    }
   }
-  return TRUE;
+
+  \Drupal::logger('simplenews')->error('Stop sending newsletter to avoid broken links / SPAM. Site URI not specified.');
+  return FALSE;
+
 }
 
 /**
